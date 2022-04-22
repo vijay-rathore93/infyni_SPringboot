@@ -1,31 +1,41 @@
 package com.infynicode.hospital.controller;
 
 import com.infynicode.hospital.service.HospitalService;
+import com.infynicode.hospital.utility.HospitalConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+import java.util.Arrays;
+import java.util.List;
+
+//@Slf4j
 @RestController
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@RequestMapping(HospitalConstant.HOSPITAL_CONTEXT_PATH)
 public class HospitalController {
 
-    private final HospitalService hospitalService;
+//    private final HospitalService hospitalService;
 
 
-//    //constructor autowiring
-//    private HospitalService hospitalService2;
-//
-//    @Autowired
-//    public void setHospitalService2(HospitalService hospitalService2) {
-//        this.hospitalService2 = hospitalService2;
-//    }
-//
-//   @Autowired
-//    public HospitalController(HospitalService hospitalService2) {
-//        this.hospitalService2 = hospitalService2;
-//    }
+    @GetMapping("/stringData")
+    public List<String> getStrings() {
+        return Arrays.asList("String1,String2", "String3");
+    }
 
+
+    @GetMapping("/data")
+    public ResponseEntity<List<String>> getData() {
+        return new ResponseEntity<>(Arrays.asList("String1,String2", "String3"), HttpStatus.OK);
+    }
+
+
+
+
+
+    // data, corresponding httpCode
 
 
 }
