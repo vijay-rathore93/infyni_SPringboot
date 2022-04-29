@@ -29,12 +29,7 @@ public class Hospital {
     private String state;
     private String city;
     private String country;
-
-    @Column(name = "xyzr")
     private Integer zipCode;
-
-
-
     private String addressLine1;
     private String addressLine2;
     private String streetName;
