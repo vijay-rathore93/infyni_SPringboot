@@ -1,6 +1,7 @@
 package com.infynicode.hospital.service;
 
 import com.infynicode.hospital.entity.Hospital;
+import com.infynicode.hospital.exception.HospitalException;
 import com.infynicode.hospital.mapper.HospitalDataMapper;
 import com.infynicode.hospital.model.HospitalMO;
 import com.infynicode.hospital.repo.HospitalRepo;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -40,7 +42,22 @@ public class HospitalService {
     }
 
     public HospitalMO getSingleHospital(Integer hospitalId) {
-        Hospital hospital=  hospitalRepo.findById(hospitalId).get();
-        return hospitalDataMapper.convertEntityToModel(hospital);
+        Optional<Hospital> optionalHospital=  hospitalRepo.findById(hospitalId);
+        if(!optionalHospital.isPresent()){
+            throw new HospitalException("No Hospital data found...");
+        }
+        return hospitalDataMapper.convertEntityToModel(optionalHospital.get());
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }
