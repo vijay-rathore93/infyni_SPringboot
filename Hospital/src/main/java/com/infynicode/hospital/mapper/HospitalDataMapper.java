@@ -24,9 +24,10 @@ public class HospitalDataMapper {
     }
 
 
-    public HospitalMO convertEntityToModel(Hospital input ){
+    public HospitalMO convertEntityToModel(Hospital input){
 
-       return HospitalMO.builder().addressLine1(input.getAddressLine1())
+       return HospitalMO.builder()
+               .addressLine1(input.getAddressLine1())
                 .addressLine2(input.getAddressLine2())
                 .city(input.getCity())
                 .code(input.getCode())
