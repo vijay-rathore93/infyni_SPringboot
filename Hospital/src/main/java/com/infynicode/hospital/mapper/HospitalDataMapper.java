@@ -5,7 +5,7 @@ import com.infynicode.hospital.model.HospitalMO;
 import org.springframework.stereotype.Component;
 
 
-//@Component
+@Component
 public class HospitalDataMapper {
 
 

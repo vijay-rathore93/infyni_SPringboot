@@ -7,12 +7,6 @@ import javax.persistence.*;
 
 
 @Data
-//@Getter @Setter @EqualAndHashCode
-/*@Getter
-@Setter
-@EqualsAndHashCode
-@RequiredArgsConstructor
-@ToString*/
 @Entity
 @Builder
 @Table(name = "hospital")
