@@ -38,7 +38,7 @@ public class DepartmentController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/{hospitalId}")
+    @GetMapping("/hospital/{hospitalId}")
     public ResponseEntity<List<DepartmentMO>> getDepartments(@PathVariable("hospitalId") Integer hospitalId) {
         return new ResponseEntity<>(departmentService.getDepartments(hospitalId),
                 HttpStatus.OK);

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.patterns.HasThisTypePatternTriedToSneakInSomeGenericOrParameterizedTypePatternMatchingStuffAnywhereVisitor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class HospitalService {
@@ -44,19 +45,6 @@ public class HospitalService {
     public List<HospitalMO> getAllHospitals() {
         List<Hospital> hospitals = hospitalRepo.findAll();
         List<HospitalMO> response = new ArrayList<>();
-        for (Hospital hospital : hospitals) {
-            //HttpHeaders httpHeaders=new HttpHeaders();
-            //HttpEntity httpEntity=new HttpEntity(httpHeaders);
-
-           /* ResponseEntity<DepartmentMO[]> responseEntity = restTemplate.exchange(departmentBaseUrl,
-                    HttpMethod.GET, null, DepartmentMO[].class);
-            if(responseEntity.getStatusCode().value()== HttpStatus.OK.value()){
-                response.add(hospitalDataMapper.convertEntityToModel(hospital),responseEntity.getBody());
-            }*/
-
-
-
-        }
         return response;
     }
 
@@ -65,7 +53,20 @@ public class HospitalService {
         if (!optionalHospital.isPresent()) {
             throw new HospitalException("No Hospital data found...");
         }
-        return hospitalDataMapper.convertEntityToModel(optionalHospital.get());
+        HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(optionalHospital.get());
+        //calling department service to fetch corresponding department for particular hospital.
+        ResponseEntity<List<DepartmentMO>> responseEntity = restTemplate.exchange(departmentBaseUrl +"/hospital/"+ hospitalId,
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<DepartmentMO>>(){});
+
+
+        if(responseEntity.getStatusCode().is2xxSuccessful()){
+            List<DepartmentMO> departments=  responseEntity.getBody();
+            hospitalMO.setDepartments(departments);
+            //get data and set in response
+        }else{
+            log.info("No Departments are available for hospital id:{}",hospitalId);
+        }
+        return hospitalMO;
     }
 
 
