@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -61,21 +62,32 @@ public class HospitalService {
         Sort.Direction direction= sortingType.equalsIgnoreCase("desc")?Sort.Direction.DESC:Sort.Direction.ASC;
         Sort sort = Sort.by(direction, criteria);
         List<Hospital> hospitals = hospitalRepo.findAll(sort);
-        List<HospitalMO> response = new ArrayList<>();
-        for (Hospital hospital:hospitals) {
+        //List<HospitalMO> response = new ArrayList<>();
+
+        List<HospitalMO> response= hospitals.stream().map(obj->{
+            HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(obj);
+            getDepartments(hospitalMO.getId(), hospitalMO);
+            return hospitalMO;
+        }).collect(Collectors.toList());
+
+
+
+       /* for (Hospital hospital:hospitals) {
             HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(hospital);
             getDepartments(hospitalMO.getId(), hospitalMO);
             response.add(hospitalMO);
-        }
+        }*/
         return response;
     }
 
     public HospitalMO getSingleHospital(Integer hospitalId) {
-        Optional<Hospital> optionalHospital = hospitalRepo.findById(hospitalId);
-        if (!optionalHospital.isPresent()) {
+       // Optional<Hospital> optionalHospital = hospitalRepo.findById(hospitalId);
+
+        Hospital optionalHospital = hospitalRepo.findById(hospitalId).orElseThrow(()->new HospitalException("No Hospital data found..."));
+        /*if (!optionalHospital.isPresent()) {
             throw new HospitalException("No Hospital data found...");
-        }
-        HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(optionalHospital.get());
+        }*/
+        HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(optionalHospital);
         //calling department service to fetch corresponding department for particular hospital.
         getDepartments(hospitalId, hospitalMO);
         return hospitalMO;
