@@ -27,8 +27,9 @@ public class HospitalController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<HospitalMO>> allHospitalData() {
-        return new ResponseEntity<>(hospitalService.getAllHospitals(),
+    public ResponseEntity<List<HospitalMO>> allHospitalData(@RequestParam(required = false,value = "criteria", defaultValue = "lastModifiedDate") String criteria
+    ,@RequestParam(required = false, defaultValue = "desc",value = "sortType") String sortType) {
+        return new ResponseEntity<>(hospitalService.getAllHospitals(criteria,sortType),
                 HttpStatus.OK);
     }
 

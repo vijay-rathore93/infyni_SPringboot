@@ -9,8 +9,10 @@ import com.infynicode.hospital.repo.HospitalRepo;
 import com.infynicode.hospital.utility.Validators;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class HospitalService {
 
     private final Validators validators;
 
+    private final ModelMapper modelMapper;
+
     @Value("${department.base.url}")
     private String departmentBaseUrl;
 
@@ -45,11 +49,18 @@ public class HospitalService {
         Hospital hospital = hospitalDataMapper.convertModelToEntity(input);
         Hospital hospitalCreated = hospitalRepo.save(hospital);
         //conversion of entity to Model as we are sending response(Service->Controller)
-        return hospitalDataMapper.convertEntityToModel(hospitalCreated);
+
+        //with model mapper.
+       return  modelMapper.map(hospitalCreated,HospitalMO.class);
+
+       //with data mapper (manually)
+       // return hospitalDataMapper.convertEntityToModel(hospitalCreated);
     }
 
-    public List<HospitalMO> getAllHospitals() {
-        List<Hospital> hospitals = hospitalRepo.findAll();
+    public List<HospitalMO> getAllHospitals(String criteria,String sortingType) {
+        Sort.Direction direction= sortingType.equalsIgnoreCase("desc")?Sort.Direction.DESC:Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, criteria);
+        List<Hospital> hospitals = hospitalRepo.findAll(sort);
         List<HospitalMO> response = new ArrayList<>();
         for (Hospital hospital:hospitals) {
             HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(hospital);
