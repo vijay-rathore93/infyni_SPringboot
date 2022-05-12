@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "hospital")
 @AllArgsConstructor // all argument constructors
 @NoArgsConstructor// default constructor
-public class Hospital {
+public class Hospital extends  Auditable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +45,7 @@ public class Hospital {
 
 
     @NotNull(message = HospitalConstant.ZIP_REQUIRED)
+    @Column(name = "zipCode")
     private Integer zipCode;
     private String addressLine1;
     private String addressLine2;

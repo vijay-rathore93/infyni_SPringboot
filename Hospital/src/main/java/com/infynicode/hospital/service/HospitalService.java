@@ -9,8 +9,10 @@ import com.infynicode.hospital.repo.HospitalRepo;
 import com.infynicode.hospital.utility.Validators;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,6 +36,8 @@ public class HospitalService {
 
     private final Validators validators;
 
+    private final ModelMapper modelMapper;
+
     @Value("${department.base.url}")
     private String departmentBaseUrl;
 
@@ -45,26 +50,44 @@ public class HospitalService {
         Hospital hospital = hospitalDataMapper.convertModelToEntity(input);
         Hospital hospitalCreated = hospitalRepo.save(hospital);
         //conversion of entity to Model as we are sending response(Service->Controller)
-        return hospitalDataMapper.convertEntityToModel(hospitalCreated);
+
+        //with model mapper.
+       return  modelMapper.map(hospitalCreated,HospitalMO.class);
+
+       //with data mapper (manually)
+       // return hospitalDataMapper.convertEntityToModel(hospitalCreated);
     }
 
-    public List<HospitalMO> getAllHospitals() {
-        List<Hospital> hospitals = hospitalRepo.findAll();
-        List<HospitalMO> response = new ArrayList<>();
-        for (Hospital hospital:hospitals) {
+    public List<HospitalMO> getAllHospitals(String criteria,String sortingType) {
+        Sort.Direction direction= sortingType.equalsIgnoreCase("desc")?Sort.Direction.DESC:Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, criteria);
+        List<Hospital> hospitals = hospitalRepo.findAll(sort);
+        //List<HospitalMO> response = new ArrayList<>();
+
+        List<HospitalMO> response= hospitals.stream().map(obj->{
+            HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(obj);
+            getDepartments(hospitalMO.getId(), hospitalMO);
+            return hospitalMO;
+        }).collect(Collectors.toList());
+
+
+
+       /* for (Hospital hospital:hospitals) {
             HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(hospital);
             getDepartments(hospitalMO.getId(), hospitalMO);
             response.add(hospitalMO);
-        }
+        }*/
         return response;
     }
 
     public HospitalMO getSingleHospital(Integer hospitalId) {
-        Optional<Hospital> optionalHospital = hospitalRepo.findById(hospitalId);
-        if (!optionalHospital.isPresent()) {
+       // Optional<Hospital> optionalHospital = hospitalRepo.findById(hospitalId);
+
+        Hospital optionalHospital = hospitalRepo.findById(hospitalId).orElseThrow(()->new HospitalException("No Hospital data found..."));
+        /*if (!optionalHospital.isPresent()) {
             throw new HospitalException("No Hospital data found...");
-        }
-        HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(optionalHospital.get());
+        }*/
+        HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(optionalHospital);
         //calling department service to fetch corresponding department for particular hospital.
         getDepartments(hospitalId, hospitalMO);
         return hospitalMO;

@@ -1,6 +1,7 @@
 package com.infynicode.hospital.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.infynicode.hospital.entity.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include. NON_NULL)
-public class HospitalMO {
+public class HospitalMO extends Auditable {
 
     private Integer id;
     private String name;
