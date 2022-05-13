@@ -7,6 +7,7 @@ import com.infynicode.department.mapper.DepartmentDataMapper;
 import com.infynicode.department.model.DepartmentMO;
 import com.infynicode.department.repo.DepartmentRepo;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,11 +20,14 @@ public class DepartmentService {
 
     private final DepartmentRepo departmentRepo;
     private final DepartmentDataMapper departmentDataMapper;
+    private final ModelMapper modelMapper;
 
     public DepartmentMO saveDepartment(DepartmentMO input) {
-        Department department=departmentDataMapper.convertModelToEntity(input);
+        Department department= departmentDataMapper.convertModelToEntity(input);
         Department departmentCreated= departmentRepo.save(department);
-        return departmentDataMapper.convertEntityToModel(departmentCreated);
+
+        return  modelMapper.map(departmentCreated,DepartmentMO.class);
+        //return departmentDataMapper.convertEntityToModel(departmentCreated);
     }
 
     public List<DepartmentMO> getAllDepartmentData() {
