@@ -1,4 +1,4 @@
-package com.infynicode.hospital.mapper;
+/*package com.infynicode.hospital.mapper;
 
 import com.infynicode.hospital.entity.Hospital;
 import com.infynicode.hospital.model.HospitalMO;
@@ -40,3 +40,4 @@ public class HospitalDataMapper {
                 .build();
     }
 }
+*/
