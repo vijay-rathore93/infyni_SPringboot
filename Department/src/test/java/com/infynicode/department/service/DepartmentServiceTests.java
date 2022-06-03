@@ -5,14 +5,17 @@ import com.infynicode.department.exception.DepartmentException;
 import com.infynicode.department.mapper.DepartmentDataMapper;
 import com.infynicode.department.model.DepartmentMO;
 import com.infynicode.department.repo.DepartmentRepo;
-import com.sun.xml.internal.ws.policy.sourcemodel.wspolicy.XmlToken;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,17 +34,6 @@ public class DepartmentServiceTests {
 
     @InjectMocks
     private DepartmentService departmentService;
-
-//    @BeforeAll
-//    public   static  void init(){
-//        System.out.println("@BeforeAll all called");
-//    }
-//
-//    @BeforeEach
-//    public void beforeEach() {
-//        System.out.println("@BeforeEach all called");
-//    }
-
 
     @Test
     public void saveDepartmentTest() {
@@ -88,6 +80,25 @@ public class DepartmentServiceTests {
         assertNotNull(exceptionResponse.getErrorMessage());
         assertEquals("No Department data found...", exceptionResponse.getErrorMessage());
         verify(departmentRepo, Mockito.times(1)).findById(1);
+    }
+
+    @Test
+    public void getDepartmentsTest() {
+        Department department= getDepartment();
+        department.setDeptId(1);
+        List<Department> departments= Arrays.asList(department);
+        when( departmentRepo.findByHospitalId(1)).thenReturn(departments);
+        departments.forEach(obj->{
+            DepartmentMO departmentMO= getDepartmentMO();
+            departmentMO.setDeptId(1);
+            when(departmentDataMapper.convertEntityToModel(obj)).thenReturn(departmentMO);
+        });
+        List<DepartmentMO>  actualResponse = departmentService.getDepartments(1);
+        assertNotNull(actualResponse);
+        assertEquals(1,actualResponse.size());
+        assertEquals(1,actualResponse.get(0).getHospitalId());
+        assertEquals(1,actualResponse.get(0).getDeptId());
+        verify(departmentRepo, Mockito.times(1)).findByHospitalId(1);
     }
 
 
