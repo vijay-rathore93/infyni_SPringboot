@@ -5,11 +5,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
 @Configuration
+@EnableJpaAuditing(auditorAwareRef = "aware")
 public class Config {
 
     /*@Bean
