@@ -3,10 +3,11 @@ package com.infynicode.department.service;
 
 import com.infynicode.department.entity.Department;
 import com.infynicode.department.exception.DepartmentException;
-import com.infynicode.department.mapper.DepartmentDataMapper;
+//import com.infynicode.department.mapper.DepartmentDataMapper;
 import com.infynicode.department.model.DepartmentMO;
 import com.infynicode.department.repo.DepartmentRepo;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,12 +19,16 @@ import java.util.Optional;
 public class DepartmentService {
 
     private final DepartmentRepo departmentRepo;
-    private final DepartmentDataMapper departmentDataMapper;
+    //private final DepartmentDataMapper departmentDataMapper;
+    private final ModelMapper modelMapper;
 
     public DepartmentMO saveDepartment(DepartmentMO input) {
-        Department department=departmentDataMapper.convertModelToEntity(input);
+     //   Department department= departmentDataMapper.convertModelToEntity(input);
+        Department department = modelMapper.map(input, Department.class);
         Department departmentCreated= departmentRepo.save(department);
-        return departmentDataMapper.convertEntityToModel(departmentCreated);
+
+        return  modelMapper.map(departmentCreated,DepartmentMO.class);
+        //return departmentDataMapper.convertEntityToModel(departmentCreated);
     }
 
     public List<DepartmentMO> getAllDepartmentData() {
@@ -38,7 +43,8 @@ public class DepartmentService {
         if(!optionalHospital.isPresent()){
             throw new DepartmentException("No Department data found...");
         }
-        return departmentDataMapper.convertEntityToModel(optionalHospital.get());
+       // return departmentDataMapper.convertEntityToModel(optionalHospital.get());
+        return modelMapper.map(optionalHospital.get(),DepartmentMO.class);
     }
 
     public List<DepartmentMO> getDepartments(Integer hospitalId) {
@@ -50,7 +56,8 @@ public class DepartmentService {
     private List<DepartmentMO> getDepartmentMOS(List<Department> list) {
         List<DepartmentMO> response=new ArrayList<>();
         for (Department department: list) {
-            response.add(departmentDataMapper.convertEntityToModel(department));
+            //response.add(departmentDataMapper.convertEntityToModel(department));
+            response.add(modelMapper.map(department,DepartmentMO.class));
         }
         return response;
     }

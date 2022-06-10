@@ -2,7 +2,7 @@ package com.infynicode.hospital.service;
 
 import com.infynicode.hospital.entity.Hospital;
 import com.infynicode.hospital.exception.HospitalException;
-import com.infynicode.hospital.mapper.HospitalDataMapper;
+//import com.infynicode.hospital.mapper.HospitalDataMapper;
 import com.infynicode.hospital.model.DepartmentMO;
 import com.infynicode.hospital.model.HospitalMO;
 import com.infynicode.hospital.repo.HospitalRepo;
@@ -30,7 +30,7 @@ public class HospitalService {
 
     private final HospitalRepo hospitalRepo;
 
-    private final HospitalDataMapper hospitalDataMapper;
+ //   private final HospitalDataMapper hospitalDataMapper;
 
     private final RestTemplate restTemplate;
 
@@ -47,7 +47,8 @@ public class HospitalService {
 
         validators.validateRequest(input);
 
-        Hospital hospital = hospitalDataMapper.convertModelToEntity(input);
+       // Hospital hospital = hospitalDataMapper.convertModelToEntity(input);
+        Hospital hospital = modelMapper.map(input,Hospital.class);
         Hospital hospitalCreated = hospitalRepo.save(hospital);
         //conversion of entity to Model as we are sending response(Service->Controller)
 
@@ -65,7 +66,10 @@ public class HospitalService {
         //List<HospitalMO> response = new ArrayList<>();
 
         List<HospitalMO> response= hospitals.stream().map(obj->{
-            HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(obj);
+
+            //HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(obj);
+            HospitalMO hospitalMO= modelMapper.map(obj,HospitalMO.class);
+
             getDepartments(hospitalMO.getId(), hospitalMO);
             return hospitalMO;
         }).collect(Collectors.toList());
@@ -87,7 +91,10 @@ public class HospitalService {
         /*if (!optionalHospital.isPresent()) {
             throw new HospitalException("No Hospital data found...");
         }*/
-        HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(optionalHospital);
+
+        //HospitalMO hospitalMO= hospitalDataMapper.convertEntityToModel(optionalHospital);
+        HospitalMO hospitalMO= modelMapper.map(optionalHospital,HospitalMO.class);
+
         //calling department service to fetch corresponding department for particular hospital.
         getDepartments(hospitalId, hospitalMO);
         return hospitalMO;

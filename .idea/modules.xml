@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Department/Department.iml" filepath="$PROJECT_DIR$/Department/Department.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Hospital/Hospital.iml" filepath="$PROJECT_DIR$/Hospital/Hospital.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Patient/Patient.iml" filepath="$PROJECT_DIR$/Patient/Patient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/infyni_SPringboot.iml" filepath="$PROJECT_DIR$/.idea/infyni_SPringboot.iml" />
+    </modules>
+  </component>
+</project>

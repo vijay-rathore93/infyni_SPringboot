@@ -1,5 +1,6 @@
 package com.infynicode.department.model;
 
+import com.infynicode.department.entity.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PatientMO {
+public class PatientMO extends Auditable {
 
     private Integer id;
     private String name;
